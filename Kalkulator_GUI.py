@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 import tkinter as tk
-from FP_algoritm import reksadana
+from FP_algoritm import reksadana, formatrupiah
 
 
 window = tk.Tk()
@@ -121,25 +121,13 @@ def hitung():
     else :
         reksa = 12
     hasil1, hasil2 = reksadana(int(biaya) - int(modal), int(waktu), reksa)
-    
-    entry_tabungan_perbulan.set(hasil2)
-    entry_uang_yang_dibutuhkan.set(hasil1)
+    txt_biaya.insert(0,formatrupiah(biaya))
+    entry_tabungan_perbulan.set(formatrupiah(hasil2))
+    entry_uang_yang_dibutuhkan.set(formatrupiah(hasil1))
     
 
 btn_hitung = Button(window, text='Hitung', height=2, width=10, bg='gray', bd=6, command = hitung)
 btn_hitung.grid(row = 7 , column = 2)
-
-# entry_text = 'First name'
-# my_entry = Entry(font='Arial 18', fg='Grey')
-# my_entry.insert(0, entry_text)
-# my_entry.bind("<FocusIn>", lambda args: focus_in_entry_box(my_entry))
-# my_entry.bind("<FocusOut>", lambda args: focus_out_entry_box(my_entry, entry_text))
-# my_entry.grid(
-#     column= 2,
-#     row=5
-# )
-
-
 
 window.mainloop()
 
