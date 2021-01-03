@@ -5,7 +5,9 @@ from FP_algoritm import reksadana
 
 
 window = tk.Tk()
-window.geometry("800x470")
+window.maxsize(540, 320) 
+window.minsize(540, 320) 
+window.geometry("540x320")
 window.title("Calculator")
 
 Label(
@@ -77,7 +79,7 @@ txt_modal.grid(columnspan=2, column= 2, row=2)
 
 
 txt_waktu_invest = Entry(font=('Helvetica',20,'bold'), justify='right', fg='Grey', bd='5')
-txt_waktu_invest.insert(0, 0)
+txt_waktu_invest.insert(0, '/bulan')
 txt_waktu_invest.bind("<FocusIn>", lambda args: focus_in_entry_box(txt_waktu_invest))
 txt_waktu_invest.bind("<FocusOut>", lambda args: focus_out_entry_box(txt_waktu_invest, 0))
 txt_waktu_invest.grid(columnspan=2, column= 2, row=3)
