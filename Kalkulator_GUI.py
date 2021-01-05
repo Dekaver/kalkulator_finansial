@@ -1,11 +1,12 @@
 from tkinter import *
 from tkinter import ttk
 import tkinter as tk
-from FP_algoritm import reksadana, formatrupiah
+from FP_algoritm import *
 
 
 window = tk.Tk()
 window.geometry("800x470")
+window.resizable(0,0)
 window.title("Calculator")
 
 Label(
@@ -120,7 +121,7 @@ def hitung():
         reksa = 19
     else :
         reksa = 12
-    hasil1, hasil2 = reksadana(int(biaya) - int(modal), int(waktu), reksa)
+    hasil1, hasil2 = reksadana_no_FP(int(biaya) - int(modal), int(waktu), reksa)
     txt_biaya.insert(0,formatrupiah(biaya))
     entry_tabungan_perbulan.set(formatrupiah(hasil2))
     entry_uang_yang_dibutuhkan.set(formatrupiah(hasil1))
