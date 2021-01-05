@@ -8,7 +8,7 @@ window = tk.Tk()
 # window.maxsize(540, 320) 
 # window.minsize(540, 320) 
 window.geometry("1000x540")
-# window.resizable(0,0)
+window.resizable(0,0)
 window.title("Kalkulator Pesiapan Dana Pernikahan")
 
 
@@ -87,10 +87,10 @@ Label(
         row=5
         )    
 
-cbb_reksadana = ttk.Combobox(window,value=['Saham', 'Obligasi', 'Kontrak Investasi'], state="readonly")
-cbb_reksadana.config(width=26, font=('times new roman', 16))
-cbb_reksadana.grid(column=2, row=5, pady=5)
-cbb_reksadana.current(0)
+cbb_jenis_invest = ttk.Combobox(window,value=['Pasar Uang', 'Syariah', 'Obligasi', 'Saham'], state="readonly")
+cbb_jenis_invest.config(width=26, font=('times new roman', 16))
+cbb_jenis_invest.grid(column=2, row=5, pady=5)
+cbb_jenis_invest.current(0)
 
 
 Label(
@@ -101,11 +101,9 @@ Label(
         column = 1,        
         row=7
         )
-
-text_invest_perbulan = Entry(font=('Helvetica',20,'bold'), justify='right', fg='Grey', bd='5')
-text_invest_perbulan.insert(0, 0)
-text_invest_perbulan.bind("<FocusIn>", lambda args: focus_in_entry_box(text_invest_perbulan))
-text_invest_perbulan.bind("<FocusOut>", lambda args: focus_out_entry_box(text_invest_perbulan, 0))
+entry_invest_perbulan = StringVar()
+entry_invest_perbulan.set(0)
+text_invest_perbulan = Entry(font=('Helvetica',20,'bold'), textvariable=entry_invest_perbulan, justify='right', fg='Grey', bd='5', state='readonly')
 text_invest_perbulan.grid( column= 2, row=7, pady=5)
 
 
@@ -116,12 +114,11 @@ Label(
     ).grid(
         column = 1,        
         row=8
-        )  
-txt_danaDarurat = Entry(font=('Helvetica',20,'bold'), justify='right', fg='Grey', bd='5')
-txt_danaDarurat.insert(0, 0)
-txt_danaDarurat.bind("<FocusIn>", lambda args: focus_in_entry_box(txt_danaDarurat))
-txt_danaDarurat.bind("<FocusOut>", lambda args: focus_out_entry_box(txt_danaDarurat, 0))
-txt_danaDarurat.grid( column= 2, row=8, pady=5)
+        ) 
+entry_totalKeuntungan = StringVar()
+entry_totalKeuntungan.set(0)
+txt_totalKeuntungan = Entry(font=('Helvetica',20,'bold'), textvariable=entry_totalKeuntungan, justify='right', fg='Grey', bd='5', state = 'readonly')
+txt_totalKeuntungan.grid( column= 2, row=8, pady=5)
 
 
 Label(
@@ -131,12 +128,12 @@ Label(
     ).grid(
         column = 1,        
         row=9
-        )      
-txt_totalDana = Entry(font=('Helvetica',20,'bold'), justify='right', fg='Grey', bd='5')
-txt_totalDana.insert(0, 0)
-txt_totalDana.bind("<FocusIn>", lambda args: focus_in_entry_box(txt_totalDana))
-txt_totalDana.bind("<FocusOut>", lambda args: focus_out_entry_box(txt_totalDana, 0))
+        )  
+entry_totalDana = StringVar()
+entry_totalDana.set(0)
+txt_totalDana = Entry(font=('Helvetica',20,'bold'), textvariable = entry_totalDana, justify='right', fg='Grey', bd='5', state='readonly')
 txt_totalDana.grid( column= 2, row=9, pady=5)
+
 
 
 
@@ -257,29 +254,42 @@ def focus_in_entry_box(widget):
         widget['fg'] = 'Black'
         widget.delete(0, END)
 
-def hitung():
-    biaya = txt_biaya.get()
+def hitung1():
+    biaya = txt_biayaPernikahan.get()
     modal = txt_modal.get()
-    reksa = cbb_reksadana.get()
+    jenis_invest = cbb_jenis_invest.get()
     waktu = txt_waktu_invest.get()
-    if reksa == "Saham":
-        reksa = 7
-    elif reksa == 'Obligasi':
-        reksa = 15
-    elif reksa == 'Kontrak Investasi':
-        reksa = 19
+    if jenis_invest == "Pasar Uang":
+        jenis_invest = R.pasar_uang
+    elif jenis_invest == 'Syariah':
+        jenis_invest = R.syariah
+    elif jenis_invest == 'Obligasi':
+        jenis_invest = R.obligasi
     else :
-        reksa = 12
-    hasil1, hasil2 = reksadana(int(biaya) - int(modal), int(waktu), reksa)
-    # txt_biaya.insert(0,formatrupiah(biaya))
-    # entry_tabungan_perbulan.set(formatrupiah(hasil2))
-    # entry_uang_yang_dibutuhkan.set(formatrupiah(hasil1))
-    
+        jenis_invest = R.saham
+    Input = Input1(int(biaya), int(waktu), int(modal), int(jenis_invest))
+    modal = invest_modal(Input.modal, Input.waktu_invest, Input.jenis_invest)
 
-btn_hitung = Button(window, text='HITUNG INVEST', height=2, width=20, bg='gray', bd=6, command = hitung)
+    hasil1, hasil2 = hitung_invest_bulan(int(Input.biaya_pernikahan) - modal, int(Input.waktu_invest), int(Input.jenis_invest))
+
+    totalDana = hasil2 * Input.waktu_invest
+    hasilInvest = invest_modal(hasil2, Input.waktu_invest, Input.jenis_invest)
+    print(hasilInvest,hasil2)
+    txt_biayaPernikahan.delete(0, END)
+    txt_biayaPernikahan.insert(0, formatrupiah(Input.biaya_pernikahan))
+    txt_modal.delete(0,END)
+    txt_modal.insert(0, formatrupiah(Input.modal))
+    entry_totalDana.set(formatrupiah(totalDana))
+    entry_totalKeuntungan.set(formatrupiah(hasilInvest - totalDana + modal))
+    entry_invest_perbulan.set(formatrupiah(hasil2))
+
+def hitung2():
+    pass
+
+btn_hitung = Button(window, text='HITUNG INVEST', height=2, width=20, bg='gray', bd=6, command = hitung1)
 btn_hitung.grid(row = 6 , column = 2)
 
-btn_hitung = Button(window, text='HITUNG WAKTU', height=2, width=20, bg='gray', bd=6, command = hitung)
+btn_hitung = Button(window, text='HITUNG WAKTU', height=2, width=20, bg='gray', bd=6, command = hitung2)
 btn_hitung.grid(row = 6 , column = 4)
 
 # btn_hitung = Button(window, text='HITUNG WAKTU', height=2, width=20, bg='gray', bd=6, command = hitung)

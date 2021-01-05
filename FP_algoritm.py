@@ -1,15 +1,16 @@
 from time import time
 from collections import namedtuple
 import itertools as iter
+from multiprocessing import Pool
 
 Reksadana_value = (12, 10.5, 6, 7.5)
 Reksadana = namedtuple('Reksadana', ['saham', 'obligasi', 'pasar_uang', 'syariah'])
 R = Reksadana(*Reksadana_value)
-Inputt = namedtuple('Input', ['biaya_pernikahan', 'waktu_invest', 'modal','gaji'])
-Output = namedtuple('Output', ['dana_darurat', 'invest_bulan'])
 
-# I = Inputt(100000000,12,10000000)
-
+Input1 = namedtuple('Input', ['biaya_pernikahan', 'waktu_invest', 'modal', 'jenis_invest'])
+Output1 = namedtuple('Output', ['invest_bulan', 'Total_untung', 'total_uang'])
+Input2 = namedtuple('Input', ['biaya_pernikahan', 'waktu_invest', 'gaji', 'resiko'])
+Output2 = namedtuple('Output', ['invest_bulan', 'Total_untung', 'total_uang'])
 
 def formatrupiah(u, last= True):
     s = str(u)
@@ -23,29 +24,32 @@ def formatrupiah(u, last= True):
     else :
         return 'Rp ' + s
 
-def invest_modal(uang, waktu_invest):
+def jumlah(x , i):
+    x = iter.repeat(x)
+    bulan = range(1, i+1)
+    return sum(list(map(lambda x,i : x**i, x, bulan)))
+    
+def jumlah2(x,i):
+    summ = 0
+    bulan = range(1, i+1)
+    for i in bulan:
+        summ += x**i
+    return summ
+
+def invest_modal(uang, waktu_invest, jenis_invest):
     hasil = uang
     for i in range (waktu_invest):
-        hasil += hasil * 10/100
+        hasil = hasil + hasil * jenis_invest/100
     return hasil
 
-def reksadana(biaya_pernikahan,waktu_invest,tingkat_resiko):
+def hitung_invest_bulan(biaya_pernikahan,waktu_invest,jenis_invest):
     biaya_pernikahan = int(biaya_pernikahan)
-    tingkat_resiko = tingkat_resiko / 12
-    x = 1 + tingkat_resiko / 100
+    jenis_invest = jenis_invest / 12
+    x = 1 + jenis_invest / 100
     hasil = biaya_pernikahan / x ** waktu_invest
-    e = sum(list(map(lambda x,i : x**i, iter.repeat(x), range(1,waktu_invest+1) )))
+    e = jumlah(x, waktu_invest)
     hasil2 = biaya_pernikahan/e
-    return (hasil,hasil2)
-
-def waktu_dibutuhkan(biaya_pernikahan, invest_bulan, tingkat_resiko):
-    waktu = 0
-    invest = invest_bulan
-    while int(invest) < int(biaya_pernikahan):
-        print(waktu, invest)
-        invest += invest * 10/100
-        waktu +=1
-    return waktu
+    return (int(hasil),int(hasil2))
 
 
 def reksadana_no_FP(biaya_pernikahan,waktu_invest,tingkat_resiko):
@@ -53,9 +57,7 @@ def reksadana_no_FP(biaya_pernikahan,waktu_invest,tingkat_resiko):
     tingkat_resiko = tingkat_resiko / 12
     x = 1 + tingkat_resiko / 100
     hasil = biaya_pernikahan / x ** waktu_invest
-    summ = 0
-    for i in range(1, waktu_invest+1):
-        summ += x**i
+    summ = jumlah2(x,waktu_invest)
     hasil2 = biaya_pernikahan/summ
     return (hasil,hasil2)
 
@@ -72,19 +74,10 @@ def waktu(biaya_pernikahan, invest_bulan ,tingkat_resiko):
     return bulan-1
     
     
-
-a,b = reksadana_no_FP(100000000,12,10)
-# b = invest_modal(10000000,12)
-print(b)
-w = waktu(100000000,b,10)
-print('waktu', w)
-
-
-# start = time()
-# a=reksadana(100000000, 84, 7)
-# print(a)
-# end = time()
-# print("proccess time",float(end - start))
-# b=reksadana_no_FP(100000000, 84, 7)
-# print(a.__sizeof__())
-# print(b.__sizeof__())
+# if __name__ == '__main__':
+#     a,b = reksadana(100000000,12,15)
+#     # b = invest_modal(10000000,12)
+#     print(a,b)
+#     w = waktu(100000000,b,10)
+#     print('waktu', w)
+    
