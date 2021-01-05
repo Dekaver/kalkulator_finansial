@@ -4,12 +4,12 @@ import itertools as iter
 
 Reksadana_value = (12, 10.5, 6, 7.5)
 Reksadana = namedtuple('Reksadana', ['saham', 'obligasi', 'pasar_uang', 'syariah'])
-Reksadana(*Reksadana_value)
+R = Reksadana(*Reksadana_value)
 Inputt = namedtuple('Input', ['biaya_pernikahan', 'waktu_invest', 'modal','gaji'])
 Output = namedtuple('Output', ['dana_darurat', 'invest_bulan'])
 
 # I = Inputt(100000000,12,10000000)
-Reksadana.get()
+
 
 def formatrupiah(u, last= True):
     s = str(u)
